@@ -1,0 +1,435 @@
+import java.util.Scanner;
+
+public class KermisApp {
+	
+	public static void main(String args[]) {
+			
+		Kermis kermis = new Kermis();
+		kermis.starten();
+				
+	}	
+	
+}
+
+class Kermis {
+	
+	Scanner sc = new Scanner(System.in);
+	
+	Kassa kassa = new Kassa();
+	BelastingInspecteur belastinginspecteur = new BelastingInspecteur();
+	Monteur monteur = new Monteur();
+	Botsauto botsauto = new Botsauto();
+	Spin spin = new Spin();
+	Spiegelpaleis spiegelpaleis = new Spiegelpaleis();
+	Spookhuis spookhuis = new Spookhuis();
+	Hawaii hawaii = new Hawaii();
+	Ladderklimmen ladderklimmen = new Ladderklimmen();	
+	
+	void starten() {
+
+		botsauto.getNaam();
+		botsauto.getPrijs();
+		botsauto.getOppervlakte();
+		spin.getNaam();
+		spin.getPrijs();
+		spin.getOppervlakte();
+		spiegelpaleis.getNaam();
+		spiegelpaleis.getPrijs();
+		spiegelpaleis.getOppervlakte();
+		spookhuis.getNaam();
+		spookhuis.getPrijs();
+		spookhuis.getOppervlakte();
+		hawaii.getNaam();
+		hawaii.getPrijs();
+		hawaii.getOppervlakte();
+		ladderklimmen.getNaam();
+		ladderklimmen.getPrijs();
+		ladderklimmen.getOppervlakte();
+		spin.opstellingsKeuring();
+		hawaii.opstellingsKeuring();
+		
+		System.out.println("De kermis is open ...\nVoer attractienummer in. [ 1: Botsauto's | 2: Spin | 3: Spiegelpaleis | 4: Spookhuis | 5: Hawaii | 6: Ladderklimmen ]");
+		
+		for (int i = 0; i < 1; ) {
+
+			String input = sc.nextLine();	
+			
+			switch (input) {
+			
+			case "1" : {
+				botsauto.draaien();
+				botsauto.addOmzet();
+				break;
+			}
+			
+			case "2" : {
+				if (spin.opstellingsKeuring() && spin.draaiLimiet < 5) {
+					spin.draaien();
+					spin.addOmzet();
+					spin.kansSpelBelastingBetalen();
+					spin.draaiLimiet++;
+				} else 
+					if (spin.draaiLimiet >= 5) {
+						System.out.println("De attractie " + spin.naam + " moet een onderhoudsbeurt ondergaan.");
+					} else
+						System.out.println("Er is geen opstellingskeuring voor de attractie " + spin.naam + ".");
+				break;
+			}
+			
+			case "3" : {
+				spiegelpaleis.draaien();
+				spiegelpaleis.addOmzet();
+				break;
+			}
+			
+			case "4" : {
+				spookhuis.draaien();
+				spookhuis.addOmzet();
+				break;
+			}
+			
+			case "5" : {
+				if (hawaii.opstellingsKeuring() && hawaii.draaiLimiet < 10) {
+					hawaii.draaien();
+					hawaii.addOmzet();
+					hawaii.draaiLimiet++;
+				} else 
+					if (hawaii.draaiLimiet >= 10) {
+						System.out.println("De attractie " + hawaii.naam + " moet een onderhoudsbeurt ondergaan.");
+					} else
+						System.out.println("Er is geen opstellingskeuring voor de attractie " + hawaii.naam + ".");
+				break;
+			}
+			
+			case "6" : {
+				ladderklimmen.draaien();
+				ladderklimmen.addOmzet();
+				ladderklimmen.kansSpelBelastingBetalen();
+				break;
+			}
+			
+			case "o" : {
+				kassa.omzet = botsauto.omzet + spin.omzet + spiegelpaleis.omzet + spookhuis.omzet + hawaii.omzet + ladderklimmen.omzet;
+				kassa.getOmzet();
+				break;
+			}
+			
+			case "k" : {
+				kassa.kaartjesVerkocht = botsauto.kaartjesVerkocht + spin.kaartjesVerkocht + spiegelpaleis.kaartjesVerkocht + spookhuis.kaartjesVerkocht + hawaii.kaartjesVerkocht + ladderklimmen.kaartjesVerkocht;
+				kassa.getKaartjesVerkocht();
+				break;
+			}
+			
+			case "b" : {
+				belastinginspecteur.inspecteren();
+				if (botsauto instanceof GokAttractie) {
+					belastinginspecteur.belasting = belastinginspecteur.belasting + botsauto.omzet * 0.3;
+					botsauto.omzet = botsauto.omzet * 0.7;
+				}
+				if (spin instanceof GokAttractie) {
+					belastinginspecteur.belasting = belastinginspecteur.belasting + spin.omzet * 0.3;
+					spin.omzet = spin.omzet * 0.7;
+				}
+				if (spiegelpaleis instanceof GokAttractie) {
+					belastinginspecteur.belasting = belastinginspecteur.belasting + spiegelpaleis.omzet * 0.3;
+					spiegelpaleis.omzet = spiegelpaleis.omzet * 0.7;
+				}
+				if (spookhuis instanceof GokAttractie) {
+					belastinginspecteur.belasting = belastinginspecteur.belasting + spookhuis.omzet * 0.3;
+					spookhuis.omzet = spookhuis.omzet * 0.7;
+				}
+				if (hawaii instanceof GokAttractie) {
+					belastinginspecteur.belasting = belastinginspecteur.belasting + hawaii.omzet * 0.3;
+					hawaii.omzet = hawaii.omzet * 0.7;
+				}
+				if (ladderklimmen instanceof GokAttractie) {
+					belastinginspecteur.belasting = belastinginspecteur.belasting + ladderklimmen.omzet * 0.3;
+					ladderklimmen.omzet = ladderklimmen.omzet * 0.7;
+				}
+				belastinginspecteur.belastingTrekken();
+				kassa.omzet = kassa.omzet - belastinginspecteur.belasting;
+				belastinginspecteur.belasting = 0.0;
+				kassa.getBezoekBelastingInspecteur();
+				break;
+			}
+			
+			case "m" : {
+				monteur.resetAttractie();
+				spin.draaiLimiet = 0;
+				hawaii.draaiLimiet = 0;
+				break;
+			}
+			
+			default : {
+				System.out.println("Ongeldige invoer.");
+			}	
+			
+			}
+		
+		}		
+		
+	}
+	
+}
+
+class Attractie {
+	
+	String naam;
+	double prijs;
+	double oppervlakte;
+	double omzet;
+	int kaartjesVerkocht;
+	
+	void draaien() {
+		
+		System.out.println("De attractie " + naam + " draait.");
+		kaartjesVerkocht++;
+		
+	}
+	
+	double addOmzet() {
+		
+		omzet = omzet + prijs;
+		return omzet;
+		
+	}
+	
+}
+
+abstract class RisicoRijkeAttractie extends Attractie {
+	
+	int draaiLimiet;
+	
+	boolean opstellingsKeuring() {
+		
+		return true;
+		
+	}
+
+}
+
+class Botsauto extends Attractie {
+	
+	String getNaam() {
+		
+		naam = "Botsauto's";
+		return naam;
+		
+	}
+	
+	double getPrijs() {
+		
+		prijs = 2.50;
+		return prijs;
+		
+	}
+	
+	double getOppervlakte() {
+		
+		oppervlakte = 10.00;
+		return oppervlakte;
+		
+	}
+	
+}
+
+class Spin extends RisicoRijkeAttractie implements GokAttractie {
+	
+	String getNaam() {
+		
+		naam = "Spin";
+		return naam;
+		
+	}
+	
+	double getPrijs() {
+		
+		prijs = 2.25;
+		return prijs;
+		
+	}
+	
+	double getOppervlakte() {
+		
+		oppervlakte = 25.00;
+		return oppervlakte;
+		
+	}
+
+	@Override
+	public void kansSpelBelastingBetalen() {
+		
+		double kansSpelBelasting = omzet * 0.3;
+		System.out.println("Deze attractie reserveert €" + kansSpelBelasting + " aan kansspelbelasting.");
+
+	}
+	
+}
+
+class Spiegelpaleis extends Attractie {
+	
+	String getNaam() {
+		
+		naam = "Spiegelpaleis";
+		return naam;
+		
+	}
+	
+	double getPrijs() {
+		
+		prijs = 2.75;
+		return prijs;
+		
+	}
+	
+	double getOppervlakte() {
+		
+		oppervlakte = 75.00;
+		return oppervlakte;
+		
+	}
+	
+}
+
+class Spookhuis extends Attractie {
+	
+	String getNaam() {
+		
+		naam = "Spookhuis";
+		return naam;
+		
+	}
+	
+	double getPrijs() {
+		
+		prijs = 3.20;
+		return prijs;
+		
+	}
+	
+	double getOppervlakte() {
+		
+		oppervlakte = 100.00;
+		return oppervlakte;
+		
+	}
+	
+}
+
+class Hawaii extends RisicoRijkeAttractie {
+	
+	String getNaam() {
+		
+		naam = "Hawaii";
+		return naam;
+		
+	}
+	
+	double getPrijs() {
+		
+		prijs = 2.90;
+		return prijs;
+		
+	}
+	
+	double getOppervlakte() {
+		
+		oppervlakte = 30.00;
+		return oppervlakte;
+		
+	}
+	
+}
+
+class Ladderklimmen extends Attractie implements GokAttractie {
+	
+	String getNaam() {
+		
+		naam = "Ladderklimmen";
+		return naam;
+		
+	}
+	
+	double getPrijs() {
+		
+		prijs = 5.00;
+		return prijs;
+		
+	}
+	
+	double getOppervlakte() {
+		
+		oppervlakte = 5.00;
+		return oppervlakte;
+		
+	}
+
+	@Override
+	public void kansSpelBelastingBetalen() {
+		
+		double kansSpelBelasting = omzet * 0.3;
+		System.out.println("Deze attractie reserveert €" + kansSpelBelasting + " aan kansspelbelasting.");
+		
+	}
+	
+}
+
+interface GokAttractie {
+
+	void kansSpelBelastingBetalen();
+	
+}
+	
+class Kassa {
+	
+	double omzet;
+	int kaartjesVerkocht;
+	int bezoekBelastingInspecteur;
+	
+	void getOmzet() {
+		
+		System.out.println("De Kermis heeft €" + omzet + " omzet gemaakt.");
+		
+	}
+	
+	void getKaartjesVerkocht() {
+		
+		System.out.println("De kermis heeft " + kaartjesVerkocht + " kaartjes verkocht.");
+
+	}
+	
+	void getBezoekBelastingInspecteur() {
+		
+		bezoekBelastingInspecteur++;
+		
+	}
+	
+}
+
+class BelastingInspecteur {
+	
+	double belasting;
+	
+	void inspecteren() {
+		
+		System.out.println("De belastinginspecteur is er ...");
+		
+	}
+	
+	void belastingTrekken() {
+		
+		System.out.println("De belastinginspecteur trekt €" + belasting + " uit je omzet.");
+		
+	}
+	
+}
+
+class Monteur {
+	
+	void resetAttractie() {
+		
+		System.out.println("De monteur keurt alle risicorijkeattracties en die kunnen weer draaien.");
+		
+	}
+	
+}
